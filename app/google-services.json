@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "126299167571",
+    "project_id": "zapis24-76762"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126299167571:android:85ea5ca067a21017",
+        "android_client_info": {
+          "package_name": "ru.allmoyki"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDemoBw4cYyQppHOE9FELIaFH3b8HUjE0Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-71325242-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
