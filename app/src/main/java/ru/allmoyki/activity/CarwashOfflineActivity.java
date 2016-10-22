@@ -1,15 +1,19 @@
 package ru.allmoyki.activity;
 
+
+import android.app.AlertDialog;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +30,10 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.squareup.otto.Subscribe;
 
 import java.text.ParseException;
@@ -89,7 +97,7 @@ public class CarwashOfflineActivity extends AppCompatActivity {
     TextView tvPrice;
     @InjectView(R.id.tvTime)
     TextView tvTime;
-    android.support.v7.widget.SwitchCompat sUpdateApp;
+    SwitchCompat sUpdateApp;
     private String title, lat, lon, phone, id;
 
     @InjectView(R.id.rToday)
@@ -121,7 +129,7 @@ public class CarwashOfflineActivity extends AppCompatActivity {
             Log.d("Log", "status:" + addOrderPojo.getData().getOrderStatusId() + ":");
             try {
                 if (addOrderPojo.getData().getOrderStatusId().equals("-1")) {
-                    Toast.makeText(CarwashOfflineActivity.this, "Заказ добавлен", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CarwashOfflineActivity.this, "Запрос отправлен. Администратор мойки перезвонит Вам и согласует время.", Toast.LENGTH_LONG).show();
                     if (sUpdateApp.isChecked()) {
                         setTimer();
                     }
@@ -139,6 +147,11 @@ public class CarwashOfflineActivity extends AppCompatActivity {
 
         }
     };
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     private void setTimer() {
 //        calendar.set(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH) + 1, Calendar.SUNDAY, 8, 00, 00);
@@ -422,7 +435,7 @@ public class CarwashOfflineActivity extends AppCompatActivity {
 
         ButterKnife.inject(this);
 
-        sUpdateApp = (android.support.v7.widget.SwitchCompat) findViewById(R.id.sUpdateApp);
+        sUpdateApp = (SwitchCompat) findViewById(R.id.sUpdateApp);
 
         progressDialog = ProgressDialogCustom.getProgressDialog(this);
         rGDate.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -458,6 +471,9 @@ public class CarwashOfflineActivity extends AppCompatActivity {
         });
 
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void setTimeRadio(int type) {
@@ -544,15 +560,38 @@ public class CarwashOfflineActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        super.onStart();
+        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
+// See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
         BusProvider.getInstance().register(this);
+        // koms start
+        Toast toast = Toast.makeText(CarwashOfflineActivity.this, "Эта мойка не передаёт свой график онлайн", Toast.LENGTH_LONG);
+        toast.show();
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        LinearLayout toastImage = (LinearLayout) toast.getView();
+        ImageView imageView = new ImageView(CarwashOfflineActivity.this);
+        imageView.setImageResource(R.drawable.icon_offline);
+        toastImage.addView(imageView, 0);
+        Toast toast2 = Toast.makeText(CarwashOfflineActivity.this, "Вы можете отправить запрос, администратор мойки Вам перезвонит.", Toast.LENGTH_LONG);
+        toast2.show();
+        toast2.setGravity(Gravity.CENTER, 0, 0);
+
+        // koms finish
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
     @Override
     public void onStop() {
-        super.onStop();
+        super.onStop();// ATTENTION: This was auto-generated to implement the App Indexing API.
+// See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
         BusProvider.getInstance().unregister(this);
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.disconnect();
     }
 
     @Subscribe
@@ -613,5 +652,20 @@ public class CarwashOfflineActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("CarwashOffline Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
 }
 
